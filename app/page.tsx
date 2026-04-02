@@ -3,14 +3,10 @@
 import { SignInButton, SignUpButton, useAuth } from "@clerk/nextjs";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { fetchTrendingMoviesAction } from "@/app/actions/tmdb";
+import type { TMDBMovie } from "@/app/lib/tmdb";
 
-const TRENDING_FILMS = [
-  { title: "ANORA", year: 2024, genre: "Drama" },
-  { title: "THE BRUTALIST", year: 2024, genre: "Epic" },
-  { title: "PAST LIVES", year: 2023, genre: "Romance" },
-  { title: "DUNE: PART TWO", year: 2024, genre: "Sci-Fi" },
-  { title: "INTERSTELLAR", year: 2014, genre: "Sci-Fi" },
-];
+// Static rooms and logs stay the same for now
 
 const ACTIVE_ROOMS = [
   { name: "dune-lore-deep-dive", users: 34 },
@@ -218,9 +214,22 @@ export default function Home() {
     1200
   );
   const [mounted, setMounted] = useState(false);
+  const [trendingMovies, setTrendingMovies] = useState<TMDBMovie[]>([]);
+  const [isLoadingTrending, setIsLoadingTrending] = useState(true);
 
   useEffect(() => {
     setMounted(true);
+    
+    // Fetch live trending movies from TMDB via Server Action
+    async function getTrending() {
+      const result = await fetchTrendingMoviesAction();
+      if (result.success && result.data) {
+        setTrendingMovies(result.data.slice(0, 5)); // Get top 5
+      }
+      setIsLoadingTrending(false);
+    }
+    
+    getTrending();
   }, []);
 
   return (
@@ -870,17 +879,27 @@ export default function Home() {
           {/* trending */}
           <div className="panel">
             <div className="panel-label">trending now</div>
-            {TRENDING_FILMS.map((f, i) => (
-              <div className="trend-row" key={f.title}>
-                <span className="trend-num">{String(i + 1).padStart(2, "0")}</span>
-                <div>
-                  <div className="trend-title">{f.title}</div>
-                  <div className="trend-meta">
-                    {f.year} · {f.genre}
+            {isLoadingTrending ? (
+              <div className="status-row">
+                <span className="status-key">[RUNNING: SYNC_DATA...]</span>
+              </div>
+            ) : trendingMovies.length > 0 ? (
+              trendingMovies.map((f, i) => (
+                <div className="trend-row" key={f.id}>
+                  <span className="trend-num">{String(i + 1).padStart(2, "0")}</span>
+                  <div>
+                    <div className="trend-title">{f.title}</div>
+                    <div className="trend-meta">
+                      {f.release_date?.split("-")[0] || "????"} · TRENDING
+                    </div>
                   </div>
                 </div>
+              ))
+            ) : (
+              <div className="status-row">
+                <span className="status-key text-red-500">[ERROR: SYNC_FAILED]</span>
               </div>
-            ))}
+            )}
           </div>
 
           {/* system status */}
