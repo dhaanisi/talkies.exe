@@ -1,6 +1,6 @@
 "use client";
 
-import { SignInButton, SignUpButton, useAuth } from "@clerk/nextjs";
+import { SignInButton, SignOutButton, SignUpButton, useAuth } from "@clerk/nextjs";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { fetchTrendingMoviesAction } from "@/app/actions/tmdb";
@@ -219,7 +219,7 @@ export default function Home() {
 
   useEffect(() => {
     setMounted(true);
-    
+
     // Fetch live trending movies from TMDB via Server Action
     async function getTrending() {
       const result = await fetchTrendingMoviesAction();
@@ -228,7 +228,7 @@ export default function Home() {
       }
       setIsLoadingTrending(false);
     }
-    
+
     getTrending();
   }, []);
 
@@ -355,6 +355,23 @@ export default function Home() {
           font-weight: 900;
         }
         .t-btn-primary:hover { opacity: 0.88; }
+        .t-btn-yellow {
+          font-family: var(--mono);
+          font-size: 10px;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          color: #FFD700;
+          border: 1px solid rgba(255, 215, 0, 0.4);
+          padding: 8px 20px;
+          background: transparent;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .t-btn-yellow:hover {
+          background: rgba(255, 215, 0, 0.1);
+          border-color: #FFD700;
+          box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+        }
 
         /* ── hero ── */
         .hero {
@@ -786,10 +803,10 @@ export default function Home() {
           <a className="t-nav-link">rooms</a>
           <a className="t-nav-link">about</a>
           {isLoaded && (isSignedIn ? (
-            <Link href="/dashboard" className="t-btn-primary" style={{ textDecoration: "none" }}>open terminal</Link>
+            <SignOutButton><button className="t-btn-yellow">sign out</button></SignOutButton>
           ) : (
             <>
-              <SignInButton mode="modal"><button className="t-btn-ghost">sign in</button></SignInButton>
+              <SignInButton mode="modal"><button className="t-btn-yellow">sign in</button></SignInButton>
               <SignUpButton mode="modal"><button className="t-btn-primary">request access</button></SignUpButton>
             </>
           ))}
@@ -834,7 +851,7 @@ export default function Home() {
               ) : (
                 <>
                   <SignUpButton mode="modal"><button className="btn-enter">enter network <span>→</span></button></SignUpButton>
-                  <SignInButton mode="modal"><button className="btn-outline">sign in</button></SignInButton>
+                  <SignInButton mode="modal"><button className="t-btn-yellow" style={{ padding: "14px 40px", fontSize: "11px", letterSpacing: "3px" }}>sign in</button></SignInButton>
                 </>
               ))}
             </div>
