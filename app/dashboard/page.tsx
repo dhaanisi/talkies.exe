@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, SignOutButton } from "@clerk/nextjs";
 
 /* ─────────────────────────────────────────
    Mock data
@@ -84,7 +84,6 @@ function MyFilmCard({ film }: { film: typeof MY_RECENT[0] }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        background: "#080a16",
         border: `1px solid ${hovered ? accentColor + "44" : "rgba(0,255,65,0.1)"}`,
         transition: "border-color 0.2s, background 0.2s",
         position: "relative",
@@ -237,12 +236,31 @@ export default function Dashboard() {
           border-bottom: 1px solid var(--b);
           display: flex;
           align-items: center;
+          justify-content: space-between;
         }
-        .t-search { position: relative; width: 100%; max-width: 480px; }
+        .t-search { position: relative; width: 100%; max-width: 480px; flex: 1; }
         .t-search input { width: 100%; background: var(--bg3); border: 1px solid var(--b); color: var(--w); font-family: var(--mono); font-size: 11px; padding: 7px 14px 7px 32px; outline: none; letter-spacing: 0.5px; transition: border-color 0.2s; }
         .t-search input:focus { border-color: var(--b2); }
         .t-search input::placeholder { color: rgba(0,255,65,0.2); }
         .t-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 11px; color: var(--dim); font-family: var(--mono); }
+        
+        .t-btn-yellow {
+          font-family: var(--mono);
+          font-size: 10px;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          color: #FFD700;
+          border: 1px solid rgba(255, 215, 0, 0.4);
+          padding: 8px 20px;
+          background: transparent;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .t-btn-yellow:hover {
+          background: rgba(255, 215, 0, 0.1);
+          border-color: #FFD700;
+          box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+        }
       `}</style>
       
       {/* ── MAIN SEARCH ── */}
@@ -251,6 +269,9 @@ export default function Dashboard() {
           <span className="t-search-icon">⌕</span>
           <input type="text" placeholder="search cinema surveillance..." />
         </div>
+        <SignOutButton>
+          <button className="t-btn-yellow">sign out</button>
+        </SignOutButton>
       </div>
 
       {/* ── MAIN CONTENT GRID ── */}
