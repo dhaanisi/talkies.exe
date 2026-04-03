@@ -2,22 +2,23 @@
 
 import { useState } from "react";
 import { useAuth, SignOutButton } from "@clerk/nextjs";
+import { MatrixRain } from "@/components/MatrixRain";
 
 /* ─────────────────────────────────────────
    Mock data
 ───────────────────────────────────────── */
 const MY_RECENT = [
-  { id: 1, title: "Dune: Part Two", year: 2024, genre: "Sci-Fi", rating: 5, date: "today, 02:17", note: "The Giedi Prime sequences shot in UV still haunt me.", palette: "blue" },
-  { id: 2, title: "Stalker", year: 1979, genre: "Arthouse", rating: 5, date: "yesterday", note: "Memory as architecture. Tarkovsky builds rooms you can feel.", palette: "purple" },
-  { id: 3, title: "The Substance", year: 2024, genre: "Horror", rating: 4, date: "3 days ago", note: "Maximalist body horror that somehow still lands.", palette: "green" },
+  { id: 1, title: "Dune: Part Two", year: 2024, genre: "Sci-Fi", rating: 5, date: "today, 02:17", note: "The Giedi Prime sequences shot in UV still haunt me.", palette: "blue", poster: "/6izwz7rsy95ARzTR3poZ8H6c5pp.jpg" },
+  { id: 2, title: "Stalker", year: 1979, genre: "Arthouse", rating: 5, date: "yesterday", note: "Memory as architecture. Tarkovsky builds rooms you can feel.", palette: "purple", poster: "/4K2w4P1L2Vp534p2L2K4t3O5h5N.jpg" },
+  { id: 3, title: "The Substance", year: 2024, genre: "Horror", rating: 4, date: "3 days ago", note: "Maximalist body horror that somehow still lands.", palette: "green", poster: "/lqoMzCcZYEFK729d6qzt349fB4o.jpg" },
 ];
 
 const FOLLOWING_RECENT = [
-  { id: 4, user: "voidframe", title: "Annihilation", year: 2018, genre: "Sci-Fi", rating: 5, date: "01:44 UTC", note: "The shimmer sequences feel like thinking itself.", palette: "blue" },
-  { id: 5, user: "nn_user", title: "Past Lives", year: 2023, genre: "Drama", rating: 5, date: "05:20 UTC", note: "Quiet longing. The bar scene alone earns five stars.", palette: "green" },
-  { id: 6, user: "rx_ghost", title: "Hereditary", year: 2018, genre: "Horror", rating: 4, date: "09:11 UTC", note: "Sound design as dread. Nothing compares.", palette: "purple" },
-  { id: 7, user: "k1llswitch", title: "Blade Runner 2049", year: 2017, genre: "Neo-Noir", rating: 5, date: "11:05 UTC", note: "Deakins. Every frame. That's it.", palette: "blue" },
-  { id: 8, user: "staticwave", title: "The Brutalist", year: 2024, genre: "Epic", rating: 4, date: "14:33 UTC", note: "Three and a half hours and I wanted more.", palette: "green" },
+  { id: 4, user: "voidframe", title: "Annihilation", year: 2018, genre: "Sci-Fi", rating: 5, date: "01:44 UTC", note: "The shimmer sequences feel like thinking itself.", palette: "blue", poster: "/b3PSmZrmqeFOhqcYDTCytRPKqcZ.jpg" },
+  { id: 5, user: "nn_user", title: "Past Lives", year: 2023, genre: "Drama", rating: 5, date: "05:20 UTC", note: "Quiet longing. The bar scene alone earns five stars.", palette: "green", poster: "/kDp1vUBnMpe8ak4rjgl3cLELqjU.jpg" },
+  { id: 6, user: "rx_ghost", title: "Hereditary", year: 2018, genre: "Horror", rating: 4, date: "09:11 UTC", note: "Sound design as dread. Nothing compares.", palette: "purple", poster: "/p9fmuz2Oj3HtB7UhBPAxuvOGvA.jpg" },
+  { id: 7, user: "k1llswitch", title: "Blade Runner 2049", year: 2017, genre: "Neo-Noir", rating: 5, date: "11:05 UTC", note: "Deakins. Every frame. That's it.", palette: "blue", poster: "/gajva2L0rPYkEWjzgFlBXCAVBE5.jpg" },
+  { id: 8, user: "staticwave", title: "The Brutalist", year: 2024, genre: "Epic", rating: 4, date: "14:33 UTC", note: "Three and a half hours and I wanted more.", palette: "green", poster: null },
 ];
 
 const ROOMS = [
@@ -90,14 +91,19 @@ function MyFilmCard({ film }: { film: typeof MY_RECENT[0] }) {
         overflow: "hidden",
         cursor: "pointer",
         background: hovered ? "rgba(0,255,65,0.02)" : "#080a16",
+        aspectRatio: "1.85",
       } as React.CSSProperties}
     >
       {/* top accent bar */}
       <div style={{ height: 2, background: `linear-gradient(90deg, ${accentColor}, transparent)`, transform: hovered ? "scaleX(1)" : "scaleX(0)", transformOrigin: "left", transition: "transform 0.3s ease" }} />
-      <div style={{ display: "flex", gap: 0 }}>
+      <div style={{ display: "flex", gap: 0, height: "100%" }}>
         {/* poster */}
-        <div style={{ width: 80, flexShrink: 0, height: 120 }}>
-          <PosterArt palette={film.palette} title={film.title} />
+        <div style={{ width: "45%", flexShrink: 0, height: "100%", position: "relative", borderRight: `1px solid rgba(0,255,65,0.1)` }}>
+          {film.poster ? (
+            <img src={`https://image.tmdb.org/t/p/w500${film.poster}`} alt={film.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+          ) : (
+            <PosterArt palette={film.palette} title={film.title} />
+          )}
         </div>
         {/* info */}
         <div style={{ padding: "16px 20px", flex: 1, minWidth: 0 }}>
@@ -138,13 +144,18 @@ function FollowCard({ film }: { film: typeof FOLLOWING_RECENT[0] }) {
         cursor: "pointer",
         position: "relative",
         overflow: "hidden",
+        aspectRatio: "1.85",
       }}
     >
       <div style={{ height: 1, background: `linear-gradient(90deg, ${accentColor}, transparent)`, transform: hovered ? "scaleX(1)" : "scaleX(0)", transformOrigin: "left", transition: "transform 0.28s ease" }} />
-      <div style={{ display: "flex", gap: 0 }}>
+      <div style={{ display: "flex", gap: 0, height: "100%" }}>
         {/* poster */}
-        <div style={{ width: 64, flexShrink: 0, height: 100 }}>
-          <PosterArt palette={film.palette} title={film.title} />
+        <div style={{ width: "40%", flexShrink: 0, height: "100%", position: "relative", borderRight: `1px solid rgba(0,255,65,0.07)` }}>
+          {film.poster ? (
+            <img src={`https://image.tmdb.org/t/p/w500${film.poster}`} alt={film.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+          ) : (
+            <PosterArt palette={film.palette} title={film.title} />
+          )}
         </div>
         {/* info */}
         <div style={{ padding: "14px 18px", flex: 1, minWidth: 0 }}>
@@ -174,6 +185,8 @@ export default function Dashboard() {
 
   return (
     <>
+      <MatrixRain />
+      <div className="grid-bg" />
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=Rajdhani:wght@300;400;500;600&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -210,7 +223,9 @@ export default function Dashboard() {
         .section-title { font-size: 9px; color: var(--dim); letter-spacing: 4px; text-transform: uppercase; font-family: var(--mono); }
         .section-count { font-size: 9px; color: rgba(0,255,65,0.2); letter-spacing: 2px; font-family: var(--mono); }
 
-        .film-stack { display: flex; flex-direction: column; gap: 1px; margin-bottom: 48px; }
+        .grid-bg { pointer-events: none; position: fixed; inset: 0; z-index: 0; background-image: linear-gradient(rgba(0,255,65,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,65,0.02) 1px, transparent 1px); background-size: 64px 64px; }
+
+        .film-stack { display: flex; flex-direction: column; gap: 16px; margin-bottom: 48px; }
 
         /* right panel */
         .panel-block { margin-bottom: 36px; }
