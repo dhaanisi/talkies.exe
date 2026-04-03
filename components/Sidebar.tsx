@@ -330,11 +330,12 @@ export default function Sidebar() {
         .sb-divider.full { margin: 8px 0; }
 
         /* ── spacer ── */
-        .sb-spacer { flex: 1; }
+        .sb-spacer { flex: 1; min-height: 24px; } /* Ensure minimum space if content is tall */
 
         /* ── user profile bottom ── */
         .sb-user {
           border-top: 1px solid var(--b);
+          margin-top: 24px;
           padding: 14px 14px;
           display: flex;
           align-items: center;

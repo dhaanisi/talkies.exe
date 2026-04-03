@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 
 /* ─────────────────────────────────────────
@@ -19,14 +18,6 @@ const FOLLOWING_RECENT = [
   { id: 6, user: "rx_ghost", title: "Hereditary", year: 2018, genre: "Horror", rating: 4, date: "09:11 UTC", note: "Sound design as dread. Nothing compares.", palette: "purple" },
   { id: 7, user: "k1llswitch", title: "Blade Runner 2049", year: 2017, genre: "Neo-Noir", rating: 5, date: "11:05 UTC", note: "Deakins. Every frame. That's it.", palette: "blue" },
   { id: 8, user: "staticwave", title: "The Brutalist", year: 2024, genre: "Epic", rating: 4, date: "14:33 UTC", note: "Three and a half hours and I wanted more.", palette: "green" },
-];
-
-const NAV_ITEMS = [
-  { icon: "◈", label: "discover", href: "/discover" },
-  { icon: "≡", label: "feed", href: "/dashboard", active: true },
-  { icon: "⊞", label: "watchlist", href: "/watchlist", badge: 12 },
-  { icon: "◉", label: "profile", href: "/profile" },
-  { icon: "◆", label: "stats", href: "/stats" },
 ];
 
 const ROOMS = [
@@ -177,10 +168,9 @@ function FollowCard({ film }: { film: typeof FOLLOWING_RECENT[0] }) {
 }
 
 /* ─────────────────────────────────────────
-   Dashboard
+   Dashboard Feed (Main Content)
 ───────────────────────────────────────── */
 export default function Dashboard() {
-  const [collapsed, setCollapsed] = useState(false);
   const { isSignedIn } = useAuth();
 
   return (
@@ -194,7 +184,7 @@ export default function Dashboard() {
           --g3: rgba(0,255,65,0.1);
           --blue: #00c2ff;
           --purple: #a855f7;
-          --bg: #04050a;
+          --bg: transparent; /* allow the Matrix rain through */
           --bg2: #080a16;
           --bg3: #0c0e1c;
           --b: rgba(0,255,65,0.1);
@@ -205,112 +195,32 @@ export default function Dashboard() {
           --vt: 'VT323', monospace;
           --raj: 'Rajdhani', sans-serif;
         }
-        body { background: var(--bg); color: var(--w); font-family: var(--mono); }
-        body::after {
-          content: '';
-          pointer-events: none;
-          position: fixed;
-          inset: 0;
-          z-index: 9999;
-          background: repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.06) 3px,rgba(0,0,0,0.06) 4px);
-        }
-        .dash { display: grid; grid-template-columns: auto 1fr; grid-template-rows: 52px 1fr; min-height: 100vh; }
 
-        /* topbar */
-        .topbar { grid-column: 1 / -1; background: var(--bg2); border-bottom: 1px solid var(--b2); display: flex; align-items: center; padding: 0 24px; gap: 20px; }
-        .t-logo { font-family: var(--vt); font-size: 26px; letter-spacing: 4px; color: var(--w); text-decoration: none; }
-        .t-logo span { color: var(--g); }
-        .topbar-center { flex: 1; display: flex; align-items: center; justify-content: center; }
-        .t-search { position: relative; width: 320px; }
-        .t-search input { width: 100%; background: var(--bg3); border: 1px solid var(--b); color: var(--w); font-family: var(--mono); font-size: 11px; padding: 7px 14px 7px 32px; outline: none; letter-spacing: 0.5px; transition: border-color 0.2s; }
-        .t-search input:focus { border-color: var(--b2); }
-        .t-search input::placeholder { color: rgba(0,255,65,0.2); }
-        .t-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 11px; color: var(--dim); }
-        .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 20px; }
-        .t-stat { font-size: 10px; color: var(--dim); letter-spacing: 2px; }
-        .t-stat span { color: var(--g); }
-        .t-live { display: flex; align-items: center; gap: 6px; font-size: 10px; color: rgba(0,255,65,0.4); letter-spacing: 2px; }
-        .t-live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--g); animation: blink 1.4s infinite; }
-        @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.2} }
-        .t-avatar { width: 30px; height: 30px; border: 1px solid var(--b2); display: flex; align-items: center; justify-content: center; font-family: var(--vt); font-size: 16px; color: var(--g); cursor: pointer; transition: border-color 0.2s; }
-        .t-avatar:hover { border-color: var(--g); }
-
-        /* sidebar */
-        .sidebar {
-          background: var(--bg2);
-          border-right: 1px solid var(--b);
-          display: flex;
-          flex-direction: column;
-          width: ${collapsed ? "56px" : "200px"};
-          transition: width 0.28s cubic-bezier(0.4,0,0.2,1);
-          overflow: hidden;
-          position: relative;
+        /* main layout */
+        .main { 
+          background: transparent; 
+          display: grid; 
+          grid-template-columns: 1fr 280px; 
+          min-height: 100vh;
         }
-        .s-toggle {
-          display: flex;
-          align-items: center;
-          justify-content: ${collapsed ? "center" : "flex-end"};
-          padding: ${collapsed ? "16px 0" : "16px 14px"};
-          border-bottom: 1px solid var(--b);
-        }
-        .s-toggle-btn {
-          background: transparent;
-          border: 1px solid var(--b);
-          color: var(--dim);
-          font-family: var(--mono);
-          font-size: 12px;
-          width: 26px;
-          height: 26px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          transition: all 0.2s;
-          flex-shrink: 0;
-        }
-        .s-toggle-btn:hover { border-color: var(--g); color: var(--g); }
-        .s-section { font-size: 8px; color: rgba(0,255,65,0.22); letter-spacing: 3px; padding: ${collapsed ? "14px 0 4px" : "14px 16px 4px"}; text-transform: uppercase; white-space: nowrap; text-align: ${collapsed ? "center" : "left"}; overflow: hidden; }
-        .s-item {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: ${collapsed ? "10px 0" : "9px 16px"};
-          font-size: 11px;
-          color: rgba(0,255,65,0.35);
-          cursor: pointer;
-          border-left: 2px solid transparent;
-          text-decoration: none;
-          letter-spacing: 0.5px;
-          transition: all 0.15s;
-          white-space: nowrap;
-          overflow: hidden;
-          justify-content: ${collapsed ? "center" : "flex-start"};
-        }
-        .s-item:hover { color: var(--g); background: rgba(0,255,65,0.03); }
-        .s-item.active { color: var(--g); border-left-color: var(--g); background: rgba(0,255,65,0.04); }
-        .s-icon { font-size: 13px; flex-shrink: 0; width: 16px; text-align: center; }
-        .s-label { overflow: hidden; opacity: ${collapsed ? 0 : 1}; max-width: ${collapsed ? "0px" : "120px"}; transition: opacity 0.2s, max-width 0.28s; }
-        .s-badge { margin-left: auto; background: rgba(0,255,65,0.1); border: 1px solid var(--b2); color: var(--g); font-size: 8px; padding: 1px 5px; flex-shrink: 0; opacity: ${collapsed ? 0 : 1}; transition: opacity 0.15s; }
-
-        /* main */
-        .main { background: var(--bg); overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(0,255,65,0.15) transparent; display: grid; grid-template-columns: 1fr 280px; }
+        
         .feed { padding: 36px 40px; border-right: 1px solid var(--b); }
-        .panel-right { padding: 36px 28px; background: var(--bg); }
+        .panel-right { padding: 36px 28px; background: transparent; }
 
         .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-        .section-title { font-size: 9px; color: var(--dim); letter-spacing: 4px; text-transform: uppercase; }
-        .section-count { font-size: 9px; color: rgba(0,255,65,0.2); letter-spacing: 2px; }
+        .section-title { font-size: 9px; color: var(--dim); letter-spacing: 4px; text-transform: uppercase; font-family: var(--mono); }
+        .section-count { font-size: 9px; color: rgba(0,255,65,0.2); letter-spacing: 2px; font-family: var(--mono); }
 
         .film-stack { display: flex; flex-direction: column; gap: 1px; margin-bottom: 48px; }
 
         /* right panel */
         .panel-block { margin-bottom: 36px; }
-        .panel-label { font-size: 8px; color: rgba(0,255,65,0.25); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--b); }
-        .stat-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid rgba(0,255,65,0.05); font-size: 11px; }
+        .panel-label { font-size: 8px; color: rgba(0,255,65,0.25); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--b); font-family: var(--mono); }
+        .stat-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid rgba(0,255,65,0.05); font-size: 11px; font-family: var(--mono); }
         .stat-row:last-child { border-bottom: none; }
         .stat-key { color: rgba(0,255,65,0.3); letter-spacing: 1px; }
         .stat-val { color: var(--g); letter-spacing: 1px; }
-        .room-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid rgba(0,255,65,0.05); cursor: pointer; transition: padding-left 0.15s; }
+        .room-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid rgba(0,255,65,0.05); cursor: pointer; transition: padding-left 0.15s; font-family: var(--mono); }
         .room-row:last-child { border-bottom: none; }
         .room-row:hover { padding-left: 4px; }
         .room-name { font-size: 11px; color: rgba(0,255,65,0.4); letter-spacing: 0.5px; transition: color 0.15s; }
@@ -320,118 +230,86 @@ export default function Dashboard() {
         .log-btn:hover { background: rgba(0,255,65,0.06); box-shadow: 0 0 16px rgba(0,255,65,0.08); }
         .log-btn-secondary { width: 100%; background: transparent; border: 1px solid rgba(0,255,65,0.1); color: rgba(0,255,65,0.35); font-family: var(--mono); font-size: 10px; padding: 10px; cursor: pointer; letter-spacing: 2px; text-transform: uppercase; transition: all 0.2s; }
         .log-btn-secondary:hover { border-color: var(--b2); color: var(--g); }
+        
+        /* top-level search container (was topbar) */
+        .top-search-container {
+          padding: 24px 40px;
+          border-bottom: 1px solid var(--b);
+          display: flex;
+          align-items: center;
+        }
+        .t-search { position: relative; width: 100%; max-width: 480px; }
+        .t-search input { width: 100%; background: var(--bg3); border: 1px solid var(--b); color: var(--w); font-family: var(--mono); font-size: 11px; padding: 7px 14px 7px 32px; outline: none; letter-spacing: 0.5px; transition: border-color 0.2s; }
+        .t-search input:focus { border-color: var(--b2); }
+        .t-search input::placeholder { color: rgba(0,255,65,0.2); }
+        .t-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 11px; color: var(--dim); font-family: var(--mono); }
       `}</style>
+      
+      {/* ── MAIN SEARCH ── */}
+      <div className="top-search-container bg-(--bg2)/60 backdrop-blur-md">
+        <div className="t-search">
+          <span className="t-search-icon">⌕</span>
+          <input type="text" placeholder="search cinema surveillance..." />
+        </div>
+      </div>
 
-      <div className="dash">
-        {/* ── TOPBAR ── */}
-        <div className="topbar">
-          <Link href="/" className="t-logo">talkies<span>.exe</span></Link>
-          <div className="topbar-center">
-            <div className="t-search">
-              <span className="t-search-icon">⌕</span>
-              <input type="text" placeholder="search films, users, rooms..." />
-            </div>
+      {/* ── MAIN CONTENT GRID ── */}
+      <div className="main">
+        {/* Feed */}
+        <div className="feed bg-(--bg)/40 backdrop-blur-sm">
+          {/* My recent logs */}
+          <div className="section-header">
+            <span className="section-title">// my recent logs</span>
+            <span className="section-count">{MY_RECENT.length} entries</span>
           </div>
-          <div className="topbar-right">
-            <div className="t-live"><span className="t-live-dot" />live</div>
-            <div className="t-stat"><span>342</span> online</div>
-            <div className="t-avatar">KL</div>
+          <div className="film-stack">
+            {MY_RECENT.map((f) => <MyFilmCard key={f.id} film={f} />)}
+          </div>
+
+          {/* Following feed */}
+          <div className="section-header">
+            <span className="section-title">// following</span>
+            <span className="section-count">{FOLLOWING_RECENT.length} new</span>
+          </div>
+          <div className="film-stack">
+            {FOLLOWING_RECENT.map((f) => <FollowCard key={f.id} film={f} />)}
           </div>
         </div>
 
-        {/* ── SIDEBAR ── */}
-        <div className="sidebar">
-          <div className="s-toggle">
-            <button className="s-toggle-btn" onClick={() => setCollapsed(!collapsed)}>
-              {collapsed ? "▸" : "◂"}
-            </button>
+        {/* Right panel */}
+        <div className="panel-right bg-(--bg2)/80 backdrop-blur-xl border-l border-(--b)">
+          <div className="panel-block">
+            <button className="log-btn">+ log a film</button>
+            <button className="log-btn-secondary">browse watchlist</button>
           </div>
 
-          <div className="s-section">{collapsed ? "·" : "// navigate"}</div>
-          {NAV_ITEMS.map((item) => (
-            <Link key={item.label} href={item.href} className={`s-item${item.active ? " active" : ""}`}>
-              <span className="s-icon">{item.icon}</span>
-              <span className="s-label">{item.label}</span>
-              {item.badge && <span className="s-badge">{item.badge}</span>}
-            </Link>
-          ))}
-
-          <div className="s-section">{collapsed ? "·" : "// rooms"}</div>
-          {ROOMS.map((r) => (
-            <Link key={r.name} href={`/rooms/${r.name}`} className="s-item">
-              <span className="s-icon" style={{ fontSize: 10 }}>#</span>
-              <span className="s-label">{r.name}</span>
-              {r.unread > 0 && <span className="s-badge">{r.unread}</span>}
-            </Link>
-          ))}
-
-          <div style={{ marginTop: "auto" }}>
-            <div className="s-section">{collapsed ? "·" : "// system"}</div>
-            <Link href="/settings" className="s-item">
-              <span className="s-icon">⊙</span>
-              <span className="s-label">settings</span>
-            </Link>
-          </div>
-        </div>
-
-        {/* ── MAIN ── */}
-        <div className="main">
-          {/* Feed */}
-          <div className="feed">
-            {/* My recent logs */}
-            <div className="section-header">
-              <span className="section-title">// my recent logs</span>
-              <span className="section-count">{MY_RECENT.length} entries</span>
-            </div>
-            <div className="film-stack">
-              {MY_RECENT.map((f) => <MyFilmCard key={f.id} film={f} />)}
-            </div>
-
-            {/* Following feed */}
-            <div className="section-header">
-              <span className="section-title">// following</span>
-              <span className="section-count">{FOLLOWING_RECENT.length} new</span>
-            </div>
-            <div className="film-stack">
-              {FOLLOWING_RECENT.map((f) => <FollowCard key={f.id} film={f} />)}
-            </div>
+          <div className="panel-block">
+            <div className="panel-label">your stats</div>
+            <div className="stat-row"><span className="stat-key">logged</span><span className="stat-val">247</span></div>
+            <div className="stat-row"><span className="stat-key">this month</span><span className="stat-val">14</span></div>
+            <div className="stat-row"><span className="stat-key">avg rating</span><span className="stat-val">★ 3.8</span></div>
+            <div className="stat-row"><span className="stat-key">following</span><span className="stat-val">31</span></div>
+            <div className="stat-row"><span className="stat-key">followers</span><span className="stat-val">18</span></div>
           </div>
 
-          {/* Right panel */}
-          <div className="panel-right">
-            <div className="panel-block">
-              <button className="log-btn">+ log a film</button>
-              <button className="log-btn-secondary">browse watchlist</button>
-            </div>
+          <div className="panel-block">
+            <div className="panel-label">active rooms</div>
+            {ROOMS.filter(r => r.unread > 0 || true).slice(0, 4).map((r) => (
+              <div key={r.name} className="room-row">
+                <span className="room-name"># {r.name}</span>
+                {r.unread > 0 && <span className="room-badge">{r.unread}</span>}
+              </div>
+            ))}
+          </div>
 
-            <div className="panel-block">
-              <div className="panel-label">your stats</div>
-              <div className="stat-row"><span className="stat-key">logged</span><span className="stat-val">247</span></div>
-              <div className="stat-row"><span className="stat-key">this month</span><span className="stat-val">14</span></div>
-              <div className="stat-row"><span className="stat-key">avg rating</span><span className="stat-val">★ 3.8</span></div>
-              <div className="stat-row"><span className="stat-key">following</span><span className="stat-val">31</span></div>
-              <div className="stat-row"><span className="stat-key">followers</span><span className="stat-val">18</span></div>
-            </div>
-
-            <div className="panel-block">
-              <div className="panel-label">active rooms</div>
-              {ROOMS.filter(r => r.unread > 0 || true).slice(0, 4).map((r) => (
-                <div key={r.name} className="room-row">
-                  <span className="room-name"># {r.name}</span>
-                  {r.unread > 0 && <span className="room-badge">{r.unread}</span>}
-                </div>
-              ))}
-            </div>
-
-            <div className="panel-block">
-              <div className="panel-label">trending today</div>
-              {["The Brutalist", "Anora", "Nosferatu", "Stalker"].map((t, i) => (
-                <div key={t} className="stat-row">
-                  <span className="stat-key" style={{ color: "rgba(0,255,65,0.22)" }}>{String(i + 1).padStart(2, "0")}</span>
-                  <span style={{ fontFamily: "'Rajdhani',sans-serif", fontWeight: 600, fontSize: 12, color: "rgba(210,220,255,0.6)", letterSpacing: 0.5 }}>{t}</span>
-                </div>
-              ))}
-            </div>
+          <div className="panel-block">
+            <div className="panel-label">trending today</div>
+            {["The Brutalist", "Anora", "Nosferatu", "Stalker"].map((t, i) => (
+              <div key={t} className="stat-row">
+                <span className="stat-key" style={{ color: "rgba(0,255,65,0.22)" }}>{String(i + 1).padStart(2, "0")}</span>
+                <span style={{ fontFamily: "'Rajdhani',sans-serif", fontWeight: 600, fontSize: 12, color: "rgba(210,220,255,0.6)", letterSpacing: 0.5 }}>{t}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
