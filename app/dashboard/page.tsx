@@ -11,14 +11,25 @@ const MY_RECENT = [
   { id: 1, title: "Dune: Part Two", year: 2024, genre: "Sci-Fi", rating: 5, date: "today, 02:17", note: "The Giedi Prime sequences shot in UV still haunt me.", palette: "blue", poster: "/6izwz7rsy95ARzTR3poZ8H6c5pp.jpg" },
   { id: 2, title: "Stalker", year: 1979, genre: "Arthouse", rating: 5, date: "yesterday", note: "Memory as architecture. Tarkovsky builds rooms you can feel.", palette: "purple", poster: "/4K2w4P1L2Vp534p2L2K4t3O5h5N.jpg" },
   { id: 3, title: "The Substance", year: 2024, genre: "Horror", rating: 4, date: "3 days ago", note: "Maximalist body horror that somehow still lands.", palette: "green", poster: "/lqoMzCcZYEFK729d6qzt349fB4o.jpg" },
+  { id: 4, title: "Perfect Blue", year: 1997, genre: "Thriller", rating: 5, date: "4 days ago", note: "The editing is peerless. Reality completely dissolves into madness.", palette: "blue", poster: null },
+  { id: 5, title: "Longlegs", year: 2024, genre: "Horror", rating: 3, date: "1 week ago", note: "Atmosphere was suffocating but the third act stumbled slightly.", palette: "purple", poster: null },
+  { id: 6, title: "Ghost in the Shell", year: 1995, genre: "Sci-Fi", rating: 5, date: "2 weeks ago", note: "Philosophy interwoven with rain and metal. Stunning.", palette: "green", poster: null },
+  { id: 7, title: "Nosferatu", year: 2024, genre: "Gothic", rating: 4, date: "2 weeks ago", note: "Eggers brings the dirt and the rot back to vampires.", palette: "blue", poster: null },
 ];
 
 const FOLLOWING_RECENT = [
-  { id: 4, user: "voidframe", title: "Annihilation", year: 2018, genre: "Sci-Fi", rating: 5, date: "01:44 UTC", note: "The shimmer sequences feel like thinking itself.", palette: "blue", poster: "/b3PSmZrmqeFOhqcYDTCytRPKqcZ.jpg" },
-  { id: 5, user: "nn_user", title: "Past Lives", year: 2023, genre: "Drama", rating: 5, date: "05:20 UTC", note: "Quiet longing. The bar scene alone earns five stars.", palette: "green", poster: "/kDp1vUBnMpe8ak4rjgl3cLELqjU.jpg" },
-  { id: 6, user: "rx_ghost", title: "Hereditary", year: 2018, genre: "Horror", rating: 4, date: "09:11 UTC", note: "Sound design as dread. Nothing compares.", palette: "purple", poster: "/p9fmuz2Oj3HtB7UhBPAxuvOGvA.jpg" },
-  { id: 7, user: "k1llswitch", title: "Blade Runner 2049", year: 2017, genre: "Neo-Noir", rating: 5, date: "11:05 UTC", note: "Deakins. Every frame. That's it.", palette: "blue", poster: "/gajva2L0rPYkEWjzgFlBXCAVBE5.jpg" },
-  { id: 8, user: "staticwave", title: "The Brutalist", year: 2024, genre: "Epic", rating: 4, date: "14:33 UTC", note: "Three and a half hours and I wanted more.", palette: "green", poster: null },
+  { id: 101, user: "voidframe", title: "Annihilation", year: 2018, genre: "Sci-Fi", rating: 5, date: "01:44 UTC", note: "The shimmer sequences feel like thinking itself. Garland captures the horrifying beauty of self-destruction elegantly. Visually intoxicating and leaving a profound feeling of biological dread. True cosmic horror wrapped in iridescent oil slicks. Nothing compares to watching this in the dark. Easily the best sci-fi of the decade.", palette: "blue", poster: "/b3PSmZrmqeFOhqcYDTCytRPKqcZ.jpg" },
+  { id: 102, user: "nn_user", title: "Past Lives", year: 2023, genre: "Drama", rating: 5, date: "05:20 UTC", note: "Quiet longing. The bar scene alone earns five stars. In-Yun is such a devastating concept when applied practically to a modern romance. We are just atoms crashing into each other over centuries.", palette: "green", poster: "/kDp1vUBnMpe8ak4rjgl3cLELqjU.jpg" },
+  { id: 103, user: "rx_ghost", title: "Hereditary", year: 2018, genre: "Horror", rating: 4, date: "09:11 UTC", note: "Sound design as dread. It climbs right into your skin. The clicking tongue will haunt my sleep.", palette: "purple", poster: "/p9fmuz2Oj3HtB7UhBPAxuvOGvA.jpg" },
+  { id: 104, user: "k1llswitch", title: "Blade Runner 2049", year: 2017, genre: "Neo-Noir", rating: 5, date: "11:05 UTC", note: "Deakins. Every frame. That's it. Denis understood the assignment entirely and created a sequel that surpasses the original in scale. The brutalist architecture contrasted against the saturated orange sands of Vegas is a masterclass in visual storytelling.", palette: "blue", poster: "/gajva2L0rPYkEWjzgFlBXCAVBE5.jpg" },
+  { id: 105, user: "staticwave", title: "The Brutalist", year: 2024, genre: "Epic", rating: 4, date: "14:33 UTC", note: "Three and a half hours spanning generations and I still desperately wanted more. Absolutely sprawling.", palette: "green", poster: null },
+  { id: 106, user: "cyber_junkie", title: "The Matrix", year: 1999, genre: "Sci-Fi", rating: 5, date: "15:10 UTC", note: "Still flawless. The blueprint for everything we do here.", palette: "green", poster: null },
+  { id: 107, user: "lens_flare", title: "Oppenheimer", year: 2023, genre: "Biopic", rating: 4, date: "16:22 UTC", note: "The Trinity test sequence is terrifying, auditory perfection.", palette: "purple", poster: null },
+  { id: 108, user: "noir_sys", title: "Chinatown", year: 1974, genre: "Noir", rating: 5, date: "17:05 UTC", note: "The gold standard of the airtight screenplay.", palette: "blue", poster: null },
+  { id: 109, user: "nn_user", title: "Drive", year: 2011, genre: "Thriller", rating: 4, date: "18:40 UTC", note: "Style as substance dripping in neon pink and synthwave.", palette: "purple", poster: null },
+  { id: 110, user: "voidframe", title: "Ex Machina", year: 2014, genre: "Sci-Fi", rating: 5, date: "19:15 UTC", note: "The Turing test wrapped in a psychological thriller box.", palette: "blue", poster: null },
+  { id: 111, user: "k1llswitch", title: "Akira", year: 1988, genre: "Anime", rating: 5, date: "21:00 UTC", note: "Hand drawn destruction on a scale that still hasn't been matched.", palette: "green", poster: null },
+  { id: 112, user: "staticwave", title: "Mad Max: Fury Road", year: 2015, genre: "Action", rating: 5, date: "22:30 UTC", note: "A two hour car chase that somehow has perfect character arcs.", palette: "blue", poster: null },
 ];
 
 const ROOMS = [
@@ -78,48 +89,47 @@ function PosterArt({ palette, title }: { palette: string; title: string }) {
 ───────────────────────────────────────── */
 function MyFilmCard({ film }: { film: typeof MY_RECENT[0] }) {
   const [hovered, setHovered] = useState(false);
-  const accentColor = film.palette === "blue" ? "#00c2ff" : film.palette === "purple" ? "#a855f7" : "#00ff41";
+  const accentColor = "#00ff41";
 
   return (
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        border: `1px solid ${hovered ? accentColor + "44" : "rgba(0,255,65,0.1)"}`,
-        transition: "border-color 0.2s, background 0.2s",
+        width: "100%",
+        transition: "transform 0.2s, box-shadow 0.2s, border-color 0.2s",
         position: "relative",
         overflow: "hidden",
         cursor: "pointer",
-        background: hovered ? "rgba(0,255,65,0.02)" : "#080a16",
-        aspectRatio: "1.85",
+        background: "#080a16",
+        border: `1px solid ${hovered ? accentColor + "AA" : "rgba(0,255,65,0.1)"}`,
+        transform: hovered ? "translateY(-4px)" : "none",
+        boxShadow: hovered ? `0 8px 16px ${accentColor}15` : "none",
+        aspectRatio: "2 / 3",
       } as React.CSSProperties}
     >
-      {/* top accent bar */}
-      <div style={{ height: 2, background: `linear-gradient(90deg, ${accentColor}, transparent)`, transform: hovered ? "scaleX(1)" : "scaleX(0)", transformOrigin: "left", transition: "transform 0.3s ease" }} />
-      <div style={{ display: "flex", gap: 0, height: "100%" }}>
-        {/* poster */}
-        <div style={{ width: "45%", flexShrink: 0, height: "100%", position: "relative", borderRight: `1px solid rgba(0,255,65,0.1)` }}>
-          {film.poster ? (
-            <img src={`https://image.tmdb.org/t/p/w500${film.poster}`} alt={film.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-          ) : (
-            <PosterArt palette={film.palette} title={film.title} />
-          )}
-        </div>
-        {/* info */}
-        <div style={{ padding: "16px 20px", flex: 1, minWidth: 0 }}>
-          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 6 }}>
-            <div>
-              <div style={{ fontFamily: "'Rajdhani',sans-serif", fontWeight: 600, fontSize: 15, color: "rgba(210,220,255,0.9)", letterSpacing: 0.5, marginBottom: 2 }}>{film.title}</div>
-              <div style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: 10, color: "rgba(0,255,65,0.35)", letterSpacing: 2 }}>{film.year} · {film.genre}</div>
-            </div>
-            <div style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: 10, color: "rgba(0,255,65,0.3)", letterSpacing: 1, whiteSpace: "nowrap", marginLeft: 12 }}>{film.date}</div>
-          </div>
-          <div style={{ display: "flex", gap: 3, marginBottom: 10 }}>
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "1px", background: `linear-gradient(90deg, ${accentColor}, transparent)`, opacity: hovered ? 0.8 : 0, transition: "opacity 0.2s", zIndex: 10 }} />
+      {/* poster layer */}
+      <div style={{ width: "100%", height: "100%", position: "relative" }}>
+        {film.poster ? (
+          <img src={`https://image.tmdb.org/t/p/w500${film.poster}`} alt={film.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+        ) : (
+          <PosterArt palette={film.palette} title={film.title} />
+        )}
+
+        {/* Hover overlay rating */}
+        <div style={{
+          position: "absolute", bottom: 0, left: 0, right: 0,
+          background: "linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0))",
+          padding: "24px 0 12px 0", display: "flex", justifyContent: "center",
+          opacity: hovered ? 1 : 0, transition: "opacity 0.2s",
+          pointerEvents: "none",
+        }}>
+          <div style={{ display: "flex", gap: 3 }}>
             {Array.from({ length: 5 }).map((_, i) => (
-              <span key={i} style={{ fontSize: 11, color: i < film.rating ? accentColor : "rgba(0,255,65,0.1)" }}>★</span>
+              <span key={i} style={{ fontSize: 13, color: i < film.rating ? accentColor : "rgba(0,255,65,0.15)", textShadow: i < film.rating ? `0 0 6px ${accentColor}` : "none" }}>★</span>
             ))}
           </div>
-          <p style={{ fontFamily: "'Rajdhani',sans-serif", fontSize: 13, color: "rgba(160,175,220,0.45)", lineHeight: 1.6, margin: 0, overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" } as React.CSSProperties}>{film.note}</p>
         </div>
       </div>
     </div>
@@ -131,46 +141,53 @@ function MyFilmCard({ film }: { film: typeof MY_RECENT[0] }) {
 ───────────────────────────────────────── */
 function FollowCard({ film }: { film: typeof FOLLOWING_RECENT[0] }) {
   const [hovered, setHovered] = useState(false);
-  const accentColor = film.palette === "blue" ? "#00c2ff" : film.palette === "purple" ? "#a855f7" : "#00ff41";
+  const accentColor = "#00ff41";
 
   return (
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        background: hovered ? "rgba(0,255,65,0.015)" : "transparent",
-        border: `1px solid ${hovered ? "rgba(0,255,65,0.15)" : "rgba(0,255,65,0.07)"}`,
-        transition: "all 0.2s",
-        cursor: "pointer",
+        width: "100%",
+        transition: "transform 0.2s, box-shadow 0.2s, border-color 0.2s",
         position: "relative",
         overflow: "hidden",
-        aspectRatio: "1.85",
+        cursor: "pointer",
+        background: "#080a16",
+        border: `1px solid ${hovered ? accentColor + "AA" : "rgba(0,255,65,0.1)"}`,
+        transform: hovered ? "translateY(-4px)" : "none",
+        boxShadow: hovered ? `0 8px 16px ${accentColor}15` : "none",
+        aspectRatio: "2 / 3",
       }}
     >
-      <div style={{ height: 1, background: `linear-gradient(90deg, ${accentColor}, transparent)`, transform: hovered ? "scaleX(1)" : "scaleX(0)", transformOrigin: "left", transition: "transform 0.28s ease" }} />
-      <div style={{ display: "flex", gap: 0, height: "100%" }}>
-        {/* poster */}
-        <div style={{ width: "40%", flexShrink: 0, height: "100%", position: "relative", borderRight: `1px solid rgba(0,255,65,0.07)` }}>
-          {film.poster ? (
-            <img src={`https://image.tmdb.org/t/p/w500${film.poster}`} alt={film.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-          ) : (
-            <PosterArt palette={film.palette} title={film.title} />
-          )}
-        </div>
-        {/* info */}
-        <div style={{ padding: "14px 18px", flex: 1, minWidth: 0 }}>
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "1px", background: `linear-gradient(90deg, ${accentColor}, transparent)`, opacity: hovered ? 0.8 : 0, transition: "opacity 0.2s", zIndex: 10 }} />
+      {/* poster layer */}
+      <div style={{ width: "100%", height: "100%", position: "relative" }}>
+        {film.poster ? (
+          <img src={`https://image.tmdb.org/t/p/w500${film.poster}`} alt={film.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+        ) : (
+          <PosterArt palette={film.palette} title={film.title} />
+        )}
+
+        {/* Hover overlay text */}
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(to top, rgba(0,10,5,0.95) 0%, rgba(0,10,5,0.75) 60%, rgba(0,10,5,0.2) 100%)",
+          padding: "16px 12px 12px", display: "flex", flexDirection: "column", justifyContent: "flex-end",
+          opacity: hovered ? 1 : 0, transition: "opacity 0.2s",
+          pointerEvents: "none",
+        }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-            <span style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: 10, color: "#00ff41", letterSpacing: 2 }}>@{film.user}</span>
-            <span style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: 9, color: "rgba(0,255,65,0.25)", letterSpacing: 1, marginLeft: "auto" }}>{film.date}</span>
+            <span style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: 10, color: "#00ff41", letterSpacing: 1 }}>@{film.user}</span>
+            <span style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: 8, color: "rgba(0,255,65,0.4)", letterSpacing: 1, marginLeft: "auto" }}>{film.date}</span>
           </div>
-          <div style={{ fontFamily: "'Rajdhani',sans-serif", fontWeight: 600, fontSize: 14, color: "rgba(210,220,255,0.85)", marginBottom: 3 }}>{film.title}</div>
-          <div style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: 9, color: "rgba(0,255,65,0.28)", letterSpacing: 2, marginBottom: 8 }}>{film.year} · {film.genre}</div>
-          <div style={{ display: "flex", gap: 3, marginBottom: 8 }}>
+          <div style={{ fontFamily: "'Rajdhani',sans-serif", fontWeight: 700, fontSize: 15, color: "rgba(220,230,255,0.95)", letterSpacing: 0.5, marginBottom: 2, lineHeight: 1.1 }}>{film.title}</div>
+          <div style={{ display: "flex", gap: 2, marginBottom: 10 }}>
             {Array.from({ length: 5 }).map((_, i) => (
-              <span key={i} style={{ fontSize: 10, color: i < film.rating ? accentColor : "rgba(0,255,65,0.1)" }}>★</span>
+              <span key={i} style={{ fontSize: 11, color: i < film.rating ? accentColor : "rgba(0,255,65,0.15)", textShadow: i < film.rating ? `0 0 6px ${accentColor}` : "none" }}>★</span>
             ))}
           </div>
-          <p style={{ fontFamily: "'Rajdhani',sans-serif", fontSize: 12, color: "rgba(160,175,220,0.4)", lineHeight: 1.6, margin: 0, overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" } as React.CSSProperties}>{film.note}</p>
+          <p style={{ fontFamily: "'Rajdhani',sans-serif", fontSize: 12, color: "rgba(180,200,210,0.8)", lineHeight: 1.4, margin: 0, overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 4, WebkitBoxOrient: "vertical" } as React.CSSProperties}>{film.note}</p>
         </div>
       </div>
     </div>
@@ -225,7 +242,8 @@ export default function Dashboard() {
 
         .grid-bg { pointer-events: none; position: fixed; inset: 0; z-index: 0; background-image: linear-gradient(rgba(0,255,65,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,65,0.02) 1px, transparent 1px); background-size: 64px 64px; }
 
-        .film-stack { display: flex; flex-direction: column; gap: 16px; margin-bottom: 48px; }
+        .film-matrix-compact { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 6px; margin-bottom: 48px; width: 100%; }
+        .film-matrix { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin-bottom: 48px; width: 100%; }
 
         /* right panel */
         .panel-block { margin-bottom: 36px; }
@@ -298,17 +316,17 @@ export default function Dashboard() {
             <span className="section-title">// my recent logs</span>
             <span className="section-count">{MY_RECENT.length} entries</span>
           </div>
-          <div className="film-stack">
-            {MY_RECENT.map((f) => <MyFilmCard key={f.id} film={f} />)}
+          <div className="film-matrix-compact">
+            {MY_RECENT.map((f, idx) => <MyFilmCard key={idx} film={f} />)}
           </div>
 
           {/* Following feed */}
-          <div className="section-header">
+          <div className="section-header" style={{ marginTop: 40 }}>
             <span className="section-title">// following</span>
             <span className="section-count">{FOLLOWING_RECENT.length} new</span>
           </div>
-          <div className="film-stack">
-            {FOLLOWING_RECENT.map((f) => <FollowCard key={f.id} film={f} />)}
+          <div className="film-matrix">
+            {FOLLOWING_RECENT.map((f, idx) => <FollowCard key={idx} film={f} />)}
           </div>
         </div>
 
