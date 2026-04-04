@@ -12,7 +12,7 @@ export default function DashboardLayout({
     <div className="relative min-h-screen bg-[#000500] text-[#92e5a1] font-mono selection:bg-cyan/30 overflow-hidden">
       {/* Background Matrix Rain */}
       <MatrixRain />
-      <div className="fixed inset-0 bg-linear-to-b from-[#000500]/40 via-transparent to-[#000500]/40 pointer-events-none z-0" />
+      <div className="fixed inset-0 bg-linear-to-b from-[#000500]/40 via-transparent to-[#000500]/40 pointer-events-none z-[1]" />
 
       {/* Main Shell Grid */}
       <div className="relative z-10 flex h-screen w-full">

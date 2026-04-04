@@ -6,7 +6,7 @@
  */
 
 const TMDB_API_URL = "https://api.themoviedb.org/3";
-const TMDB_TOKEN = process.env.TMDB_API_READ_ACCESS_TOKEN;
+const TMDB_TOKEN = process.env.TMDB_ACCESS_TOKEN;
 
 /**
  * Interface representing a Movie from TMDB

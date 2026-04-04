@@ -134,7 +134,9 @@ export default function Sidebar() {
         }
 
         .sb {
-          background: var(--bg2);
+          background: rgba(8, 10, 22, 0.85);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
           border-right: 1px solid var(--b2);
           display: flex;
           flex-direction: column;

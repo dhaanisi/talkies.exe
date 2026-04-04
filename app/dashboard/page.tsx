@@ -1,37 +1,98 @@
-"use client";
-
-import { useState } from "react";
-import { useAuth, SignOutButton } from "@clerk/nextjs";
+import { getTrendingMovies, type TMDBMovie } from "@/app/lib/tmdb";
+import { SignOutButton } from "@clerk/nextjs";
+import { MyFilmCard, FollowCard, type MyFilm, type FollowFilm } from "@/components/FilmCards";
 import { MatrixRain } from "@/components/MatrixRain";
+/* ─────────────────────────────────────────
+   Generate dynamic mock social metadata
+   (stitched to real TMDB movie data)
+───────────────────────────────────────── */
+const PALETTES = ["blue", "purple", "green"] as const;
+const HANDLES = [
+  "voidframe", "nn_user", "rx_ghost", "k1llswitch",
+  "staticwave", "cyber_junkie", "lens_flare", "noir_sys",
+  "phantom_crtx", "cellul0id", "deeptrace", "lux_machina",
+];
+const GENRES = [
+  "Sci-Fi", "Drama", "Horror", "Thriller", "Neo-Noir",
+  "Arthouse", "Action", "Gothic", "Anime", "Epic", "Biopic",
+];
+const REVIEW_FRAGMENTS = [
+  "Every frame is a painting. This is cinema at its most visually intoxicating.",
+  "Sound design as dread. It climbs right under your skin and never leaves.",
+  "The editing is peerless. Reality dissolves completely into controlled madness.",
+  "Maximalist storytelling that somehow still lands every single emotional beat.",
+  "Atmosphere was suffocating, in the best way. Couldn't look away.",
+  "Philosophy interwoven with stunning visuals. Absolutely transcendent work.",
+  "The brutalist compositions contrast perfectly against the narrative weight.",
+  "A masterclass in visual storytelling and restrained emotional devastation.",
+  "Style as substance dripping in neon. Pure cinematic adrenaline distilled.",
+  "Memory as architecture. You can feel every room the camera enters.",
+  "Hand drawn destruction on a scale that still hasn't been matched.",
+  "Quiet longing rendered in the most devastating way possible.",
+  "The blueprint for everything we celebrate about cinema.",
+  "Horrifying beauty wrapped in iridescent oil slicks. Cosmic dread perfected.",
+  "Three hours and I desperately wanted more. Absolutely sprawling and vital.",
+  "Still flawless after multiple viewings. The gold standard of its genre.",
+  "The score alone earns five stars. Auditory perfection from start to finish.",
+  "An airtight screenplay executed with breathtaking precision and confidence.",
+  "True cosmic horror wrapped in a shell of mesmerizing visual craft.",
+  "A two hour experience that manages to contain entire worlds within it.",
+];
+
+function seededRandom(seed: number): () => number {
+  let s = seed;
+  return () => {
+    s = (s * 16807 + 0) % 2147483647;
+    return s / 2147483647;
+  };
+}
+
+function mapToMyFilm(movie: TMDBMovie, index: number): MyFilm {
+  const rng = seededRandom(movie.id);
+  const year = movie.release_date ? parseInt(movie.release_date.split("-")[0]) : 2024;
+  const daysAgo = index === 0 ? 0 : index;
+  const dateLabel =
+    daysAgo === 0 ? "today, 02:17" :
+      daysAgo === 1 ? "yesterday" :
+        daysAgo < 7 ? `${daysAgo} days ago` :
+          `${Math.ceil(daysAgo / 7)} week${Math.ceil(daysAgo / 7) > 1 ? "s" : ""} ago`;
+
+  return {
+    id: movie.id,
+    title: movie.title,
+    year,
+    genre: GENRES[Math.floor(rng() * GENRES.length)],
+    rating: Math.floor(rng() * 2) + 4, // 4 or 5
+    date: dateLabel,
+    note: REVIEW_FRAGMENTS[Math.floor(rng() * REVIEW_FRAGMENTS.length)],
+    palette: PALETTES[index % PALETTES.length],
+    poster: movie.poster_path,
+  };
+}
+
+function mapToFollowFilm(movie: TMDBMovie, index: number): FollowFilm {
+  const rng = seededRandom(movie.id + 1000);
+  const year = movie.release_date ? parseInt(movie.release_date.split("-")[0]) : 2024;
+  const hour = (index * 3 + 1) % 24;
+  const minute = Math.floor(rng() * 60);
+
+  return {
+    id: movie.id,
+    title: movie.title,
+    year,
+    genre: GENRES[Math.floor(rng() * GENRES.length)],
+    rating: Math.floor(rng() * 2) + 4,
+    date: `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")} UTC`,
+    note: REVIEW_FRAGMENTS[Math.floor(rng() * REVIEW_FRAGMENTS.length)],
+    palette: PALETTES[index % PALETTES.length],
+    poster: movie.poster_path,
+    user: HANDLES[index % HANDLES.length],
+  };
+}
 
 /* ─────────────────────────────────────────
-   Mock data
+   Dashboard (Server Component)
 ───────────────────────────────────────── */
-const MY_RECENT = [
-  { id: 1, title: "Dune: Part Two", year: 2024, genre: "Sci-Fi", rating: 5, date: "today, 02:17", note: "The Giedi Prime sequences shot in UV still haunt me.", palette: "blue", poster: "/6izwz7rsy95ARzTR3poZ8H6c5pp.jpg" },
-  { id: 2, title: "Stalker", year: 1979, genre: "Arthouse", rating: 5, date: "yesterday", note: "Memory as architecture. Tarkovsky builds rooms you can feel.", palette: "purple", poster: "/4K2w4P1L2Vp534p2L2K4t3O5h5N.jpg" },
-  { id: 3, title: "The Substance", year: 2024, genre: "Horror", rating: 4, date: "3 days ago", note: "Maximalist body horror that somehow still lands.", palette: "green", poster: "/lqoMzCcZYEFK729d6qzt349fB4o.jpg" },
-  { id: 4, title: "Perfect Blue", year: 1997, genre: "Thriller", rating: 5, date: "4 days ago", note: "The editing is peerless. Reality completely dissolves into madness.", palette: "blue", poster: null },
-  { id: 5, title: "Longlegs", year: 2024, genre: "Horror", rating: 3, date: "1 week ago", note: "Atmosphere was suffocating but the third act stumbled slightly.", palette: "purple", poster: null },
-  { id: 6, title: "Ghost in the Shell", year: 1995, genre: "Sci-Fi", rating: 5, date: "2 weeks ago", note: "Philosophy interwoven with rain and metal. Stunning.", palette: "green", poster: null },
-  { id: 7, title: "Nosferatu", year: 2024, genre: "Gothic", rating: 4, date: "2 weeks ago", note: "Eggers brings the dirt and the rot back to vampires.", palette: "blue", poster: null },
-];
-
-const FOLLOWING_RECENT = [
-  { id: 101, user: "voidframe", title: "Annihilation", year: 2018, genre: "Sci-Fi", rating: 5, date: "01:44 UTC", note: "The shimmer sequences feel like thinking itself. Garland captures the horrifying beauty of self-destruction elegantly. Visually intoxicating and leaving a profound feeling of biological dread. True cosmic horror wrapped in iridescent oil slicks. Nothing compares to watching this in the dark. Easily the best sci-fi of the decade.", palette: "blue", poster: "/b3PSmZrmqeFOhqcYDTCytRPKqcZ.jpg" },
-  { id: 102, user: "nn_user", title: "Past Lives", year: 2023, genre: "Drama", rating: 5, date: "05:20 UTC", note: "Quiet longing. The bar scene alone earns five stars. In-Yun is such a devastating concept when applied practically to a modern romance. We are just atoms crashing into each other over centuries.", palette: "green", poster: "/kDp1vUBnMpe8ak4rjgl3cLELqjU.jpg" },
-  { id: 103, user: "rx_ghost", title: "Hereditary", year: 2018, genre: "Horror", rating: 4, date: "09:11 UTC", note: "Sound design as dread. It climbs right into your skin. The clicking tongue will haunt my sleep.", palette: "purple", poster: "/p9fmuz2Oj3HtB7UhBPAxuvOGvA.jpg" },
-  { id: 104, user: "k1llswitch", title: "Blade Runner 2049", year: 2017, genre: "Neo-Noir", rating: 5, date: "11:05 UTC", note: "Deakins. Every frame. That's it. Denis understood the assignment entirely and created a sequel that surpasses the original in scale. The brutalist architecture contrasted against the saturated orange sands of Vegas is a masterclass in visual storytelling.", palette: "blue", poster: "/gajva2L0rPYkEWjzgFlBXCAVBE5.jpg" },
-  { id: 105, user: "staticwave", title: "The Brutalist", year: 2024, genre: "Epic", rating: 4, date: "14:33 UTC", note: "Three and a half hours spanning generations and I still desperately wanted more. Absolutely sprawling.", palette: "green", poster: null },
-  { id: 106, user: "cyber_junkie", title: "The Matrix", year: 1999, genre: "Sci-Fi", rating: 5, date: "15:10 UTC", note: "Still flawless. The blueprint for everything we do here.", palette: "green", poster: null },
-  { id: 107, user: "lens_flare", title: "Oppenheimer", year: 2023, genre: "Biopic", rating: 4, date: "16:22 UTC", note: "The Trinity test sequence is terrifying, auditory perfection.", palette: "purple", poster: null },
-  { id: 108, user: "noir_sys", title: "Chinatown", year: 1974, genre: "Noir", rating: 5, date: "17:05 UTC", note: "The gold standard of the airtight screenplay.", palette: "blue", poster: null },
-  { id: 109, user: "nn_user", title: "Drive", year: 2011, genre: "Thriller", rating: 4, date: "18:40 UTC", note: "Style as substance dripping in neon pink and synthwave.", palette: "purple", poster: null },
-  { id: 110, user: "voidframe", title: "Ex Machina", year: 2014, genre: "Sci-Fi", rating: 5, date: "19:15 UTC", note: "The Turing test wrapped in a psychological thriller box.", palette: "blue", poster: null },
-  { id: 111, user: "k1llswitch", title: "Akira", year: 1988, genre: "Anime", rating: 5, date: "21:00 UTC", note: "Hand drawn destruction on a scale that still hasn't been matched.", palette: "green", poster: null },
-  { id: 112, user: "staticwave", title: "Mad Max: Fury Road", year: 2015, genre: "Action", rating: 5, date: "22:30 UTC", note: "A two hour car chase that somehow has perfect character arcs.", palette: "blue", poster: null },
-];
-
 const ROOMS = [
   { name: "horror-void", unread: 3 },
   { name: "a24-transmission", unread: 0 },
@@ -40,169 +101,31 @@ const ROOMS = [
   { name: "arthouse", unread: 0 },
 ];
 
-/* ─────────────────────────────────────────
-   Poster art (abstract geometric)
-───────────────────────────────────────── */
-function PosterArt({ palette, title }: { palette: string; title: string }) {
-  const colors = {
-    blue: { bg: "#020c1a", line: "rgba(0,194,255,0.15)", glyph: "rgba(0,194,255,0.08)" },
-    purple: { bg: "#08021a", line: "rgba(168,85,247,0.15)", glyph: "rgba(168,85,247,0.08)" },
-    green: { bg: "#011208", line: "rgba(0,255,65,0.15)", glyph: "rgba(0,255,65,0.08)" },
-  };
-  const c = colors[palette as keyof typeof colors] ?? colors.blue;
-  const seed = title.charCodeAt(0) % 4;
+export default async function Dashboard() {
+  // ── Fetch live TMDB trending movies ──
+  let myRecent: MyFilm[] = [];
+  let followingFeed: FollowFilm[] = [];
+  let trendingTitles: string[] = [];
 
-  return (
-    <div style={{ height: "100%", background: c.bg, position: "relative", overflow: "hidden" }}>
-      {/* scanlines */}
-      <div style={{
-        position: "absolute", inset: 0, zIndex: 2, pointerEvents: "none",
-        backgroundImage: "repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.1) 3px,rgba(0,0,0,0.1) 4px)",
-      }} />
-      {/* geometric lines */}
-      {seed === 0 && <>
-        <div style={{ position: "absolute", top: "35%", left: 0, width: "100%", height: "1px", background: c.line }} />
-        <div style={{ position: "absolute", top: 0, left: "40%", width: "1px", height: "100%", background: c.line }} />
-      </>}
-      {seed === 1 && <>
-        <div style={{ position: "absolute", top: "55%", left: 0, width: "100%", height: "1px", background: c.line }} />
-        <div style={{ position: "absolute", top: "20%", left: 0, width: "100%", height: "1px", background: c.line, opacity: 0.5 }} />
-      </>}
-      {seed === 2 && <>
-        <div style={{ position: "absolute", top: 0, left: "55%", width: "1px", height: "100%", background: c.line }} />
-        <div style={{ position: "absolute", top: "40%", left: "15%", width: "70%", height: "1px", background: c.line }} />
-      </>}
-      {seed === 3 && <>
-        <div style={{ position: "absolute", top: "30%", left: "20%", width: "60%", height: "40%", border: `1px solid ${c.line}`, transform: "rotate(-6deg)" }} />
-      </>}
-      {/* corner brackets */}
-      <div style={{ position: "absolute", top: 8, left: 8, width: 10, height: 10, borderTop: `1px solid ${c.line.replace("0.15", "0.5")}`, borderLeft: `1px solid ${c.line.replace("0.15", "0.5")}`, zIndex: 3 }} />
-      <div style={{ position: "absolute", bottom: 8, right: 8, width: 10, height: 10, borderBottom: `1px solid ${c.line.replace("0.15", "0.5")}`, borderRight: `1px solid ${c.line.replace("0.15", "0.5")}`, zIndex: 3 }} />
-      {/* glyph */}
-      <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", fontFamily: "'VT323',monospace", fontSize: 48, color: c.glyph, zIndex: 1, userSelect: "none" }}>◈</div>
-    </div>
-  );
-}
+  try {
+    const data = await getTrendingMovies("day");
+    const movies = data.results;
 
-/* ─────────────────────────────────────────
-   Film card — my logs
-───────────────────────────────────────── */
-function MyFilmCard({ film }: { film: typeof MY_RECENT[0] }) {
-  const [hovered, setHovered] = useState(false);
-  const accentColor = "#00ff41";
+    // First 7 movies → "my recent logs"
+    myRecent = movies.slice(0, 7).map(mapToMyFilm);
 
-  return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        width: "100%",
-        transition: "transform 0.2s, box-shadow 0.2s, border-color 0.2s",
-        position: "relative",
-        overflow: "hidden",
-        cursor: "pointer",
-        background: "#080a16",
-        border: `1px solid ${hovered ? accentColor + "AA" : "rgba(0,255,65,0.1)"}`,
-        transform: hovered ? "translateY(-4px)" : "none",
-        boxShadow: hovered ? `0 8px 16px ${accentColor}15` : "none",
-        aspectRatio: "2 / 3",
-      } as React.CSSProperties}
-    >
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "1px", background: `linear-gradient(90deg, ${accentColor}, transparent)`, opacity: hovered ? 0.8 : 0, transition: "opacity 0.2s", zIndex: 10 }} />
-      {/* poster layer */}
-      <div style={{ width: "100%", height: "100%", position: "relative" }}>
-        {film.poster ? (
-          <img src={`https://image.tmdb.org/t/p/w500${film.poster}`} alt={film.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-        ) : (
-          <PosterArt palette={film.palette} title={film.title} />
-        )}
+    // Next 12 movies → "following feed"
+    followingFeed = movies.slice(7, 19).map(mapToFollowFilm);
 
-        {/* Hover overlay rating */}
-        <div style={{
-          position: "absolute", bottom: 0, left: 0, right: 0,
-          background: "linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0))",
-          padding: "24px 0 12px 0", display: "flex", justifyContent: "center",
-          opacity: hovered ? 1 : 0, transition: "opacity 0.2s",
-          pointerEvents: "none",
-        }}>
-          <div style={{ display: "flex", gap: 3 }}>
-            {Array.from({ length: 5 }).map((_, i) => (
-              <span key={i} style={{ fontSize: 13, color: i < film.rating ? accentColor : "rgba(0,255,65,0.15)", textShadow: i < film.rating ? `0 0 6px ${accentColor}` : "none" }}>★</span>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────
-   Film card — following feed
-───────────────────────────────────────── */
-function FollowCard({ film }: { film: typeof FOLLOWING_RECENT[0] }) {
-  const [hovered, setHovered] = useState(false);
-  const accentColor = "#00ff41";
-
-  return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        width: "100%",
-        transition: "transform 0.2s, box-shadow 0.2s, border-color 0.2s",
-        position: "relative",
-        overflow: "hidden",
-        cursor: "pointer",
-        background: "#080a16",
-        border: `1px solid ${hovered ? accentColor + "AA" : "rgba(0,255,65,0.1)"}`,
-        transform: hovered ? "translateY(-4px)" : "none",
-        boxShadow: hovered ? `0 8px 16px ${accentColor}15` : "none",
-        aspectRatio: "2 / 3",
-      }}
-    >
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "1px", background: `linear-gradient(90deg, ${accentColor}, transparent)`, opacity: hovered ? 0.8 : 0, transition: "opacity 0.2s", zIndex: 10 }} />
-      {/* poster layer */}
-      <div style={{ width: "100%", height: "100%", position: "relative" }}>
-        {film.poster ? (
-          <img src={`https://image.tmdb.org/t/p/w500${film.poster}`} alt={film.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-        ) : (
-          <PosterArt palette={film.palette} title={film.title} />
-        )}
-
-        {/* Hover overlay text */}
-        <div style={{
-          position: "absolute", inset: 0,
-          background: "linear-gradient(to top, rgba(0,10,5,0.95) 0%, rgba(0,10,5,0.75) 60%, rgba(0,10,5,0.2) 100%)",
-          padding: "16px 12px 12px", display: "flex", flexDirection: "column", justifyContent: "flex-end",
-          opacity: hovered ? 1 : 0, transition: "opacity 0.2s",
-          pointerEvents: "none",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-            <span style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: 10, color: "#00ff41", letterSpacing: 1 }}>@{film.user}</span>
-            <span style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: 8, color: "rgba(0,255,65,0.4)", letterSpacing: 1, marginLeft: "auto" }}>{film.date}</span>
-          </div>
-          <div style={{ fontFamily: "'Rajdhani',sans-serif", fontWeight: 700, fontSize: 15, color: "rgba(220,230,255,0.95)", letterSpacing: 0.5, marginBottom: 2, lineHeight: 1.1 }}>{film.title}</div>
-          <div style={{ display: "flex", gap: 2, marginBottom: 10 }}>
-            {Array.from({ length: 5 }).map((_, i) => (
-              <span key={i} style={{ fontSize: 11, color: i < film.rating ? accentColor : "rgba(0,255,65,0.15)", textShadow: i < film.rating ? `0 0 6px ${accentColor}` : "none" }}>★</span>
-            ))}
-          </div>
-          <p style={{ fontFamily: "'Rajdhani',sans-serif", fontSize: 12, color: "rgba(180,200,210,0.8)", lineHeight: 1.4, margin: 0, overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 4, WebkitBoxOrient: "vertical" } as React.CSSProperties}>{film.note}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────
-   Dashboard Feed (Main Content)
-───────────────────────────────────────── */
-export default function Dashboard() {
-  const { isSignedIn } = useAuth();
+    // Top 4 for trending sidebar
+    trendingTitles = movies.slice(0, 4).map((m) => m.title);
+  } catch (err) {
+    console.error("TMDB fetch failed, using empty state:", err);
+    trendingTitles = ["—", "—", "—", "—"];
+  }
 
   return (
     <>
-      <MatrixRain />
       <div className="grid-bg" />
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=Rajdhani:wght@300;400;500;600&display=swap');
@@ -213,7 +136,7 @@ export default function Dashboard() {
           --g3: rgba(0,255,65,0.1);
           --blue: #00c2ff;
           --purple: #a855f7;
-          --bg: transparent; /* allow the Matrix rain through */
+          --bg: transparent;
           --bg2: #080a16;
           --bg3: #0c0e1c;
           --b: rgba(0,255,65,0.1);
@@ -263,7 +186,7 @@ export default function Dashboard() {
         .log-btn-secondary { width: 100%; background: transparent; border: 1px solid rgba(0,255,65,0.1); color: rgba(0,255,65,0.35); font-family: var(--mono); font-size: 10px; padding: 10px; cursor: pointer; letter-spacing: 2px; text-transform: uppercase; transition: all 0.2s; }
         .log-btn-secondary:hover { border-color: var(--b2); color: var(--g); }
         
-        /* top-level search container (was topbar) */
+        /* top-level search container */
         .top-search-container {
           padding: 24px 40px;
           border-bottom: 1px solid var(--b);
@@ -294,8 +217,24 @@ export default function Dashboard() {
           border-color: #FFD700;
           box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
         }
+
+        /* live pulse indicator */
+        .live-pulse {
+          display: inline-block;
+          width: 6px;
+          height: 6px;
+          background: #00ff41;
+          border-radius: 50%;
+          margin-right: 8px;
+          animation: pulse-glow 2s ease-in-out infinite;
+          box-shadow: 0 0 6px rgba(0,255,65,0.5);
+        }
+        @keyframes pulse-glow {
+          0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(0,255,65,0.5); }
+          50% { opacity: 0.4; box-shadow: 0 0 2px rgba(0,255,65,0.2); }
+        }
       `}</style>
-      
+
       {/* ── MAIN SEARCH ── */}
       <div className="top-search-container bg-(--bg2)/60 backdrop-blur-md">
         <div className="t-search">
@@ -313,21 +252,33 @@ export default function Dashboard() {
         <div className="feed bg-(--bg)/40 backdrop-blur-sm">
           {/* My recent logs */}
           <div className="section-header">
-            <span className="section-title">// my recent logs</span>
-            <span className="section-count">{MY_RECENT.length} entries</span>
+            <span className="section-title"><span className="live-pulse" />// my recent logs</span>
+            <span className="section-count">{myRecent.length} entries</span>
           </div>
-          <div className="film-matrix-compact">
-            {MY_RECENT.map((f, idx) => <MyFilmCard key={idx} film={f} />)}
-          </div>
+          {myRecent.length === 0 ? (
+            <div style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: 12, color: "rgba(0,255,65,0.3)", padding: "40px 0", textAlign: "center", letterSpacing: 2 }}>
+              ▓▓ SIGNAL LOST — TMDB UPLINK FAILED ▓▓
+            </div>
+          ) : (
+            <div className="film-matrix-compact">
+              {myRecent.map((f) => <MyFilmCard key={f.id} film={f} />)}
+            </div>
+          )}
 
           {/* Following feed */}
           <div className="section-header" style={{ marginTop: 40 }}>
-            <span className="section-title">// following</span>
-            <span className="section-count">{FOLLOWING_RECENT.length} new</span>
+            <span className="section-title"><span className="live-pulse" />// following</span>
+            <span className="section-count">{followingFeed.length} new</span>
           </div>
-          <div className="film-matrix">
-            {FOLLOWING_RECENT.map((f, idx) => <FollowCard key={idx} film={f} />)}
-          </div>
+          {followingFeed.length === 0 ? (
+            <div style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: 12, color: "rgba(0,255,65,0.3)", padding: "40px 0", textAlign: "center", letterSpacing: 2 }}>
+              ▓▓ FEED EMPTY — AWAITING TRANSMISSION ▓▓
+            </div>
+          ) : (
+            <div className="film-matrix">
+              {followingFeed.map((f) => <FollowCard key={f.id} film={f} />)}
+            </div>
+          )}
         </div>
 
         {/* Right panel */}
@@ -357,9 +308,9 @@ export default function Dashboard() {
           </div>
 
           <div className="panel-block">
-            <div className="panel-label">trending today</div>
-            {["The Brutalist", "Anora", "Nosferatu", "Stalker"].map((t, i) => (
-              <div key={t} className="stat-row">
+            <div className="panel-label"><span className="live-pulse" />trending today</div>
+            {trendingTitles.map((t, i) => (
+              <div key={t + i} className="stat-row">
                 <span className="stat-key" style={{ color: "rgba(0,255,65,0.22)" }}>{String(i + 1).padStart(2, "0")}</span>
                 <span style={{ fontFamily: "'Rajdhani',sans-serif", fontWeight: 600, fontSize: 12, color: "rgba(210,220,255,0.6)", letterSpacing: 0.5 }}>{t}</span>
               </div>
